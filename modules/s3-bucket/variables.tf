@@ -10,8 +10,8 @@ variable "name" {
   type        = string
 
   validation {
-    condition     = can(regex("^[a-z0-9-]{3,63}$", var.name))
-    error_message = "The bucket name base must be 3-63 characters, lowercase letters, numbers, and hyphens only. No underscores or uppercase characters."
+    condition     = can(regex("^[a-z0-9-]{3,50}$", var.name))
+    error_message = "The bucket name base must be 3-50 characters, lowercase letters, numbers, and hyphens only. No underscores or uppercase characters."
   }
 }
 
@@ -30,6 +30,12 @@ variable "tags" {
   description = "Additional tags to apply to the bucket, merged with standardized platform tags."
   type        = map(string)
   default     = {}
+}
+
+variable "block_public_access" {
+  description = "Block all public access to the bucket. This should remain true for production workloads."
+  type        = bool
+  default     = true
 }
 
 variable "versioning_enabled" {

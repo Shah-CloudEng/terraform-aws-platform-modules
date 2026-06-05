@@ -2,13 +2,8 @@
   modules/s3-bucket/main.tf
 
   Purpose:
-  - Scaffold the S3 bucket module implementation for enterprise AWS platform use.
-  - Define derived names and tags prior to adding resource definitions.
-
-  Notes:
-  - No AWS resources are created in this initial scaffold.
-  - This file is intentionally structured to support future implementation of S3 bucket lifecycle,
-    encryption, access controls, logging, and retention guardrails.
+  - Implement the enterprise AWS S3 bucket module using production-grade Terraform resources.
+  - Provide encryption, access controls, versioning, and ownership enforcement.
 */
 
 locals {
@@ -24,6 +19,44 @@ locals {
   )
 }
 
-# Implementation placeholder:
-# - Add aws_s3_bucket resource(s) with encryption, public access block, versioning, and lifecycle rules.
-# - Add IAM, logging, and retention controls as appropriate for enterprise usage.
+resource "aws_s3_bucket" "this" {
+  bucket        = local.bucket_name
+  force_destroy = var.force_destroy
+
+  tags = local.bucket_tags
+}
+
+resource "aws_s3_bucket_versioning" "this" {
+  bucket = aws_s3_bucket.this.id
+
+  versioning_configuration {
+    status = var.versioning_enabled ? "Enabled" : "Suspended"
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "this" {
+  bucket = aws_s3_bucket.this.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "this" {
+  bucket = aws_s3_bucket.this.id
+
+  block_public_acls       = var.block_public_access
+  block_public_policy     = var.block_public_access
+  ignore_public_acls      = var.block_public_access
+  restrict_public_buckets = var.block_public_access
+}
+
+resource "aws_s3_bucket_ownership_controls" "this" {
+  bucket = aws_s3_bucket.this.id
+
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
+}
