@@ -6,12 +6,12 @@
 */
 
 variable "name" {
-  description = "Base name for the S3 bucket. This value is combined with environment metadata to create a stable bucket name."
+  description = "Base name for the S3 bucket. This value is combined with environment metadata to create a stable bucket name. Bucket names must be lowercase, cannot contain underscores, and must follow AWS global naming constraints."
   type        = string
 
   validation {
-    condition     = length(var.name) >= 3
-    error_message = "The bucket name base must be at least 3 characters long."
+    condition     = can(regex("^[a-z0-9-]{3,63}$", var.name))
+    error_message = "The bucket name base must be 3-63 characters, lowercase letters, numbers, and hyphens only. No underscores or uppercase characters."
   }
 }
 

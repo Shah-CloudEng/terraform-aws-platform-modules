@@ -31,7 +31,7 @@ module "platform_s3_bucket" {
 
 | Name | Type | Default | Description |
 |------|------|---------|-------------|
-| `name` | `string` | n/a | Base name for the S3 bucket. Combined with environment metadata to derive the full bucket name. |
+| `name` | `string` | n/a | Base name for the S3 bucket. Combined with environment metadata to derive the full bucket name. Must be lowercase, cannot contain underscores, and should comply with AWS global S3 bucket naming rules. |
 | `environment` | `string` | `"prod"` | Deployment environment identifier. |
 | `tags` | `map(string)` | `{}` | Additional tags to apply to the bucket. |
 | `versioning_enabled` | `bool` | `true` | Enable versioning for the bucket. |
